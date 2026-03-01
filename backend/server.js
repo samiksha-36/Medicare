@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
+console.log("GROQ key loaded?", !!process.env.GROQ_API_KEY);
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
