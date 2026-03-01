@@ -17,7 +17,7 @@ import AdminAppointments from './pages/admin/Appointments';
 // Doctor Pages
 import DoctorDashboard from './pages/doctor/Dashboard';
 import DoctorAppointments from './pages/doctor/Appointments';
-import DoctorPrescriptions from './pages/doctor/Prescriptions';
+import DoctorPrescriptions from './pages/doctor/prescriptions';
 import NewPrescription from './pages/doctor/NewPrescription';
 
 // Patient Pages
