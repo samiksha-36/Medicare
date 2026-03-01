@@ -25,7 +25,7 @@ import PatientDashboard from './pages/patient/Dashboard';
 import BookAppointment from './pages/patient/BookAppointment';
 import MyAppointments from './pages/patient/MyAppointments';
 import MedicalHistory from './pages/patient/MedicalHistory';
-import DoctorList from './pages/patient/DoctorList';
+import DoctorList from './pages/patient/Doctorlist';
 
 // AI Pages
 import SymptomChecker from './pages/ai/SymptomChecker';
