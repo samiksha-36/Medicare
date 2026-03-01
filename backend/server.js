@@ -4,9 +4,11 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
+//console.log("MONGODB_URI from env =>", process.env.MONGODB_URI);
 //console.log("GEMINI KEY loaded?", !!process.env.GEMINI_API_KEY);
-console.log('GROQ KEY loaded?', !!process.env.GROQ_API_KEY);
-
+//console.log('GROQ KEY loaded?', !!process.env.GROQ_API_KEY);
+//console.log("MONGODB_URI loaded?", !!process.env.MONGODB_URI);
+//console.log("HOST CHECK:", process.env.MONGODB_URI?.includes("cluster0.ehbnheh.mongodb.net"));
 const authRoutes = require('./routes/Auth');
 const userRoutes = require('./routes/users');
 const doctorRoutes = require('./routes/doctors');
