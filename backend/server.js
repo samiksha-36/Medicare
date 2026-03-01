@@ -9,7 +9,7 @@ require('dotenv').config();
 //console.log('GROQ KEY loaded?', !!process.env.GROQ_API_KEY);
 //console.log("MONGODB_URI loaded?", !!process.env.MONGODB_URI);
 //console.log("HOST CHECK:", process.env.MONGODB_URI?.includes("cluster0.ehbnheh.mongodb.net"));
-const authRoutes = require('./routes/Auth');
+const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const doctorRoutes = require('./routes/doctors');
 const appointmentRoutes = require('./routes/appointments');
