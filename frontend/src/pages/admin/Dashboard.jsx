@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import Layout from '../../components/shared/Layout';
-import StatCard from '../../components/shared/StatCard';
+import StatCard from '../../components/shared/Statcard';
 import LoadingSpinner from '../../components/shared/LoadingSpinner';
 import StatusBadge from '../../components/shared/StatusBadge';
 import { appointmentAPI } from '../../utils/api';
