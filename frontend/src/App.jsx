@@ -33,7 +33,7 @@ import HealthChatbot from './pages/ai/HealthChatbot';
 import ReportSummarizer from './pages/ai/ReportSummarizer';
 
 // Shared
-import Profile from './pages/Profile';
+import Profile from './pages/profile';
 import NotFound from './pages/NotFound';
 
 // Protected Route Component
