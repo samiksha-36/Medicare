@@ -1,3 +1,4 @@
+import React from 'react';
 export default function StatusBadge({ status }) {
   const classes = {
     pending: 'badge-pending',
