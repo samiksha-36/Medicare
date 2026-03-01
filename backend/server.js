@@ -4,11 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
-//console.log("MONGODB_URI from env =>", process.env.MONGODB_URI);
-//console.log("GEMINI KEY loaded?", !!process.env.GEMINI_API_KEY);
-//console.log('GROQ KEY loaded?', !!process.env.GROQ_API_KEY);
-//console.log("MONGODB_URI loaded?", !!process.env.MONGODB_URI);
-//console.log("HOST CHECK:", process.env.MONGODB_URI?.includes("cluster0.ehbnheh.mongodb.net"));
+
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const doctorRoutes = require('./routes/doctors');
@@ -18,33 +14,55 @@ const aiRoutes = require('./routes/ai');
 
 const app = express();
 
-// Security middleware
+/* ================= SECURITY ================= */
+
 app.use(helmet());
-app.use(cors({
-  origin: [
-    process.env.CLIENT_URL,     // if you set it
-    "http://localhost:5173",
-    "http://localhost:5174"
-  ].filter(Boolean),
-  credentials: true
-}));
 
-// handle preflight for all routes
-app.options("*", cors());
+/* ================= CORS FIX ================= */
 
-// Rate limiting
+const allowedOrigins = [
+  process.env.CLIENT_URL, // Production frontend (set in Railway)
+  "https://medicare-samiksha.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:5174"
+].filter(Boolean);
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow Postman / server requests
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      console.log("❌ Blocked by CORS:", origin);
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // handle preflight properly
+
+/* ================= RATE LIMIT ================= */
+
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 100,
   message: 'Too many requests from this IP, please try again later.'
 });
+
 app.use('/api/', limiter);
 
-// Body parsing
+/* ================= BODY PARSER ================= */
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+/* ================= ROUTES ================= */
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/doctors', doctorRoutes);
@@ -52,33 +70,42 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/ai', aiRoutes);
 
-// Health check
-app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
+/* ================= HEALTH CHECK ================= */
 
-// 404 handler
-app.use('*', (req, res) => res.status(404).json({ message: 'Route not found' }));
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date() });
+});
 
-// Global error handler
+/* ================= 404 ================= */
+
+app.use('*', (req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
+
+/* ================= GLOBAL ERROR ================= */
+
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error("🔥 Error:", err.message);
   res.status(err.status || 500).json({
-    message: err.message || 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    message: err.message || 'Internal Server Error'
   });
 });
 
-// Database connection
+/* ================= DATABASE ================= */
+
 mongoose.connect(process.env.MONGODB_URI, {
   family: 4,
 })
-  .then(() => {
-    console.log('✅ MongoDB connected');
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-  })
-  .catch(err => {
-    console.error('❌ MongoDB connection error:', err);
-    process.exit(1);
-  });
+.then(() => {
+  console.log('✅ MongoDB connected');
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () =>
+    console.log(`🚀 Server running on port ${PORT}`)
+  );
+})
+.catch(err => {
+  console.error('❌ MongoDB connection error:', err);
+  process.exit(1);
+});
 
 module.exports = app;
